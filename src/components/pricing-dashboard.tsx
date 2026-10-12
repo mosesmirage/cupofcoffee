@@ -513,7 +513,7 @@ export default function PricingDashboard() {
                               <div className="recommendation-coffee-comparison" aria-label="Coffee comparison">
                                 <span className="recommendation-coffee-label"><span aria-hidden="true">☕</span> COFFEE COMPARISON</span>
                                 {coffeeComparison.status === "available"
-                                  ? <span className="recommendation-coffee-value"><span>{coffeeComparison.provenance === "user-entered" ? "Your benchmark" : coffeeComparison.coffeeType} · {formatMoney(coffeeComparison.price.amount, coffeeComparison.price.currency)}</span><strong>About {formatNumber(coffeeComparison.cups, 1)} cups of coffee</strong>{coffeeComparison.provenance === "candidate-demo" && <small>Demo comparison · source not independently verified</small>}</span>
+                                  ? <span className="recommendation-coffee-value"><span>{coffeeComparison.provenance === "user-entered" ? "Your benchmark" : coffeeComparison.coffeeType} · {formatMoney(coffeeComparison.price.amount, coffeeComparison.price.currency)}</span><strong>About {formatNumber(coffeeComparison.cups, 1)} cups of coffee</strong></span>
                                   : <span className="recommendation-coffee-status">Coffee comparison unavailable</span>}
                               </div>
                               {currentPrice && <span className="recommendation-difference">{recommendationDifference(result.finalPrice.amount, currentPrice.amount, identity.currency)}</span>}
