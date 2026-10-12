@@ -431,18 +431,11 @@ export default function PricingDashboard() {
           <a href="#strategies">Strategies</a>
           <a href="#revenue">Scenarios</a>
         </nav>
-        <div className="dashboard-sidebar-note">
-          <span className="live-dot" />
-          <strong>Local context, clearly shown.</strong>
-          <p>All market examples here are illustrative and editable.</p>
-          <small>CUP OF COFFEE · MVP</small>
-        </div>
       </aside>}
 
       <main className="dashboard-main" id="top">
         {journey !== "discover" && <header className="dashboard-topbar">
           <div className="dashboard-breadcrumb">Workspace <span>/</span> <strong>Pricing overview</strong></div>
-          <span className="demo-status"><span className="live-dot" /> DEMO ASSUMPTIONS</span>
         </header>}
 
         <div className={`dashboard-content${journey === "discover" ? " discovery-content" : ""}`}>
@@ -546,6 +539,7 @@ export default function PricingDashboard() {
             <details className="recommendation-data-disclosure">
               <summary>Sources, assumptions &amp; scenario limits <span>Optional detail</span></summary>
               <div className="recommendation-data-content">
+                <p className="recommendation-data-method">Market assumptions are editable. Demo values are illustrative; sourced data is identified with its source and date. Recommendations are decision support, not predictions of demand or an optimal price.</p>
                 <p className="recommendation-data-method">When comparable data is available, purchasing-power factors use the World Bank private-consumption PPP indicator (PA.NUS.PRVT.PP) with annual-average USD exchange rates from Frankfurter, normalized to a US baseline. If unavailable, the app uses visibly labeled illustrative factors.</p>
                 <div className="recommendation-data-grid">
                   {INITIAL_MARKET_IDENTITIES.map((identity) => {
@@ -566,7 +560,6 @@ export default function PricingDashboard() {
                 <p className="recommendation-data-limitations"><strong>Revenue scenario limits</strong> No market reach, demand response to price, taxes, refunds, platform rules, ranking effects, or cross-market behavior are modeled. Expected purchases may be fractional.</p>
               </div>
             </details>
-            <p className="recommendation-note">Suggestions use the visible assumptions and do not estimate willingness to pay or an optimal price.</p>
           </section>
 
           <details className="advanced-settings">
@@ -658,17 +651,14 @@ export default function PricingDashboard() {
                       {coffeeBenchmark?.sourceUrl
                         ? <a href={coffeeBenchmark.sourceUrl} target="_blank" rel="noreferrer">{coffeeBenchmark.sourceName ?? "Source"}</a>
                         : <span>{coffeeBenchmark?.sourceName ? "Note: " + coffeeBenchmark.sourceName : "No verified reference source configured"}</span>}
-                      {coffeeBenchmark?.status === "candidate-unverified" && <span>Reported price type: {coffeeBenchmark.priceType === "reported-in-store" ? "in-store (source claim; unverified)" : coffeeBenchmark.priceType === "delivery" ? "delivery" : "unknown"}</span>}
                       {coffeeBenchmark?.additionalSources?.map((source) => <a href={source.url} key={source.url} target="_blank" rel="noreferrer">Additional source: {source.name}</a>)}
-                      {coffeeBenchmark?.sourceReportedAt && <span>Source references {coffeeBenchmark.sourceReportedAt}; not an observation verification date.</span>}
-                      {coffeeBenchmark?.status === "candidate-unverified" && coffeeBenchmark.notes.map((note) => <span className="coffee-candidate-limitation" key={note}>{note}</span>)}
                       {coffeeBenchmark?.observedAt && <span>Observed {coffeeBenchmark.observedAt}</span>}
                       {coffeeBenchmark?.verifiedAt && <span>Verified {coffeeBenchmark.verifiedAt}</span>}
                       {coffeeBenchmark?.retrievedAt && <span>Entered {formatFetchTime(coffeeBenchmark.retrievedAt)}</span>}
                     </div>
                     {results[1]?.coffeeEquivalent !== undefined
                       ? <strong className="coffee-ratio">Balanced app price ≈ {formatNumber(results[1].coffeeEquivalent, 1)} benchmarks</strong>
-                      : <strong className="coffee-ratio-unavailable">{coffeeResolution.status === "candidate-unverified" ? "Candidate data is unverified and cannot produce a coffee ratio." : coffeeResolution.status === "needs-review" ? coffeeResolution.errors.join(" ") : coffeeResolution.freshness === "stale" ? "Benchmark is older than 90 days; ratio hidden." : coffeeResolution.freshness === "undated" ? "Add a recent observation date to calculate a ratio." : "No current, same-currency benchmark ratio available."}</strong>}
+                      : coffeeResolution.status !== "candidate-unverified" && <strong className="coffee-ratio-unavailable">{coffeeResolution.status === "needs-review" ? coffeeResolution.errors.join(" ") : coffeeResolution.freshness === "stale" ? "Benchmark is older than 90 days; ratio hidden." : coffeeResolution.freshness === "undated" ? "Add a recent observation date to calculate a ratio." : "No current, same-currency benchmark ratio available."}</strong>}
                     <details className="coffee-edit-details">
                       <summary>Edit my benchmark</summary>
                       <div className="coffee-edit-grid">
