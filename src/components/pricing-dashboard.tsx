@@ -257,10 +257,10 @@ export default function PricingDashboard() {
     error?: string;
   }>({ baseCurrency: "USD", status: "loading" });
   const [revenueInputs, setRevenueInputs] = useState<EditableRevenueInputs>({
-    US: { audience: "1200", conversionPercent: "2.5", feePercent: "15" },
-    TR: { audience: "900", conversionPercent: "2", feePercent: "15" },
-    UK: { audience: "700", conversionPercent: "2.5", feePercent: "15" },
-    DE: { audience: "800", conversionPercent: "2", feePercent: "15" },
+    US: { audience: "12000", conversionPercent: "2.5", feePercent: "15" },
+    TR: { audience: "9000", conversionPercent: "2", feePercent: "15" },
+    UK: { audience: "7000", conversionPercent: "2.5", feePercent: "15" },
+    DE: { audience: "8000", conversionPercent: "2", feePercent: "15" },
   });
 
   useEffect(() => {
