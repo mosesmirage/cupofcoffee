@@ -567,14 +567,15 @@ input[aria-invalid="true"] { border-color:#d7917f !important; box-shadow:0 0 0 2
 .discovery-brand-wordmark { color: #293b2f; }
 .app-discovery { margin: 0; border: 0; border-radius: 0; background: transparent; padding: 0; box-shadow: none; }
 .app-discovery .competitor-research-header { justify-content: center; text-align: center; }
-.app-discovery .competitor-research-header h1 { margin: 13px 0 8px; color: #2d3d32; font-family: Georgia, "Times New Roman", serif; font-size: clamp(37px, 5vw, 52px); font-weight: 500; letter-spacing: -1.15px; line-height: 1.08; }
-.app-discovery .competitor-research-header p { max-width: none; margin: 0; color: #788479; font-size: 16px; line-height: 1.5; }
+.app-discovery .section-eyebrow { justify-content: center; color: #6e806f; font-size: 12px; letter-spacing: 1.7px; line-height: 1.4; }
+.app-discovery .competitor-research-header h1 { margin: 13px 0 8px; color: #2d3d32; font-family: Georgia, "Times New Roman", serif; font-size: clamp(38px, 4.2vw, 48px); font-weight: 500; letter-spacing: -1px; line-height: 1.12; }
+.app-discovery .competitor-research-header p { max-width: none; margin: 0; color: #788479; font-size: 17px; line-height: 1.5; }
 .discovery-search-form { max-width: 660px; gap: 11px; margin: 31px auto 0; border: 0; background: transparent; padding: 0; }
-.discovery-search-form > label { color: #485b4c; font-size: 13px; font-weight: 700; }
+.discovery-search-form > label { color: #485b4c; font-size: 15px; font-weight: 700; }
 .discovery-search-form .competitor-search-controls { align-items: stretch; gap: 10px; }
 .discovery-search-form .competitor-search-controls input { min-height: 58px; border-color: #ccd7cb; border-radius: 9px; padding: 0 16px; font-size: 16px; }
-.discovery-search-form .competitor-search-controls button { min-height: 58px; border-radius: 9px; padding-inline: 24px; font-size: 14px; white-space: nowrap; }
-.discovery-manual-link { justify-self: center; min-height: 40px; margin-top: 4px; border: 0; background: transparent; padding: 8px 12px; color: #68796b; font: inherit; font-size: 14px; font-weight: 600; line-height: 1.4; text-align: center; text-decoration: none; cursor: pointer; }
+.discovery-search-form .competitor-search-controls button { min-height: 58px; border-radius: 9px; padding-inline: 24px; font-size: 15px; white-space: nowrap; }
+.discovery-manual-link { justify-self: center; min-height: 40px; margin-top: 4px; border: 0; background: transparent; padding: 8px 12px; color: #68796b; font: inherit; font-size: 15px; font-weight: 600; line-height: 1.4; text-align: center; text-decoration: none; cursor: pointer; }
 .discovery-manual-link:hover { color: #315b45; text-decoration: underline; text-underline-offset: 3px; }
 .discovery-manual-link:focus-visible { border-radius: 4px; outline: 3px solid #bad0bb; outline-offset: 2px; }
 .app-discovery .competitor-results { max-width: 660px; margin: 25px auto 0; }
