@@ -523,7 +523,6 @@ export default function PricingDashboard() {
                             <div className={"recommendation-strategy recommendation-" + strategy.id} key={strategy.id}>
                               <div className="recommendation-strategy-label">
                                 <strong>{strategy.label}</strong>
-                                <span>{strategyCopy[strategy.id]}</span>
                               </div>
                               <b className="recommendation-price">{formatMoney(result.finalPrice.amount, identity.currency)}</b>
                               {coffeeComparison.status === "available" && <div className="recommendation-coffee-comparison" aria-label={`About ${formatNumber(coffeeComparison.cups, 1)} cups of coffee`}><span>☕ About {formatNumber(coffeeComparison.cups, 1)} cups of coffee</span></div>}
@@ -545,7 +544,7 @@ export default function PricingDashboard() {
               })}
             </div>
             <details className="recommendation-data-disclosure">
-              <summary>Sources &amp; assumptions <span>View once for all markets</span></summary>
+              <summary>Sources, assumptions &amp; scenario limits <span>Optional detail</span></summary>
               <div className="recommendation-data-content">
                 <p className="recommendation-data-method">When comparable data is available, purchasing-power factors use the World Bank private-consumption PPP indicator (PA.NUS.PRVT.PP) with annual-average USD exchange rates from Frankfurter, normalized to a US baseline. If unavailable, the app uses visibly labeled illustrative factors.</p>
                 <div className="recommendation-data-grid">
@@ -564,6 +563,7 @@ export default function PricingDashboard() {
                   })}
                 </div>
                 <p className="recommendation-data-strategies"><strong>Strategy factors</strong> {STRATEGY_DEFINITIONS.map(({ id, label }) => `${label} ${formatNumber(Number(strategyFactors[id]), 2)}×`).join(" · ")} · Editable product assumptions, not empirically calibrated.</p>
+                <p className="recommendation-data-limitations"><strong>Revenue scenario limits</strong> No market reach, demand response to price, taxes, refunds, platform rules, ranking effects, or cross-market behavior are modeled. Expected purchases may be fractional.</p>
               </div>
             </details>
             <p className="recommendation-note">Suggestions use the visible assumptions and do not estimate willingness to pay or an optimal price.</p>
@@ -691,7 +691,7 @@ export default function PricingDashboard() {
             <summary>Revenue scenarios <span>Optional simulator</span></summary>
             <section className="revenue-section" id="revenue" aria-labelledby="revenue-title">
               <div className="section-title-row"><div><span className="section-eyebrow">SCENARIO EXPLORER</span><h2 id="revenue-title">Revenue assumptions</h2></div><label className="scenario-strategy-select">Price strategy<select value={revenueStrategy} onChange={(event) => setRevenueStrategy(event.target.value as StrategyId)}>{STRATEGY_DEFINITIONS.map((strategy) => <option key={strategy.id} value={strategy.id}>{strategy.label}</option>)}</select></label></div>
-              <p className="section-lede">Illustrative scenarios from editable assumptions; results are not predictions. Gross = audience × conversion rate × local app price. Net = gross × (1 − fee).</p>
+              <p className="section-lede">Set audience, conversion, and fee assumptions for each market. Results are hypothetical, not predictions. Gross = audience × conversion rate × local app price; net = gross × (1 − fee).</p>
               <div className="revenue-assumption-grid">
                 {INITIAL_MARKET_IDENTITIES.map((market) => {
                   const values = revenueInputs[market.id];
@@ -703,7 +703,6 @@ export default function PricingDashboard() {
                         <label>Conversion rate<input type="number" min="0" max="100" step="0.1" value={values.conversionPercent} onChange={(event) => updateRevenue(market.id, "conversionPercent", event.target.value)} aria-invalid={!Number.isFinite(Number(values.conversionPercent)) || Number(values.conversionPercent) < 0 || Number(values.conversionPercent) > 100} /><span>%</span></label>
                         <label>Platform fee<input type="number" min="0" max="100" step="0.1" value={values.feePercent} onChange={(event) => updateRevenue(market.id, "feePercent", event.target.value)} aria-invalid={values.feePercent !== "" && (!Number.isFinite(Number(values.feePercent)) || Number(values.feePercent) < 0 || Number(values.feePercent) > 100)} /><span>%</span></label>
                       </div>
-                      <p>Assumptions apply to {market.name} only · editable scenario values</p>
                     </fieldset>
                   );
                 })}
@@ -735,7 +734,6 @@ export default function PricingDashboard() {
                 </div>
                 <p className="chart-note">Bars show net as a share of gross within each market. Revenue values use separate local currencies, so no cross-market total or ranking is implied.</p>
               </div>
-              <div className="limitation-note"><strong>Scenario limitations</strong><span>Does not model market reach, demand response to price, taxes, refunds, platform rules, ranking effects, or cross-market behavior. Expected purchases may be fractional values.</span></div>
             </section>
           </details>
 
