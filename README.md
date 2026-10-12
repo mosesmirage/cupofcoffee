@@ -1,10 +1,14 @@
 # CupOfCoffee
 
-**Localized app pricing intelligence for independent developers.**
+**Find the pricing sweet spot in every market.**
+
+A price that feels fair in one country may feel expensive—or unnecessarily cheap—in another. CupOfCoffee helps independent developers explore sensible local prices, not just currency conversions, with Accessible, Balanced, and Premium strategies across the United States, Türkiye, the United Kingdom, and Germany.
+
+When an eligible local benchmark is available, a familiar coffee price adds everyday context without determining the recommendation. Results are transparent decision support, not predictions of demand or claims of a perfect price.
+
+**One app. Four markets. Find your sweet spot.**
 
 **Live demo:** [cupofcoffee.onrender.com](https://cupofcoffee.onrender.com/)
-
-CupOfCoffee helps developers compare an app's current price with localized suggestions for the United States, Türkiye, the United Kingdom, and Germany. It combines currency conversion, a purchasing-power adjustment, configurable pricing strategies, and familiar local coffee context. Recommendations are transparent decision support—not predictions of demand or a guaranteed optimal price.
 
 ## What it does
 
