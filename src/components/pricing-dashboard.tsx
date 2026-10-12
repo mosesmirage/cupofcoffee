@@ -561,7 +561,6 @@ export default function PricingDashboard() {
                       <strong>{strategy.label}</strong>
                       <span className="factor-description">{strategyCopy[strategy.id]}</span>
                       <span className="factor-input-row"><span>Strategy factor</span><input aria-label={strategy.label + " strategy factor"} type="number" min="0.01" step="0.01" value={strategyFactors[strategy.id]} onChange={(event) => setStrategyFactors((current) => ({ ...current, [strategy.id]: event.target.value }))} aria-invalid={!strategyIsOrdered} /></span>
-                      <span className="small-data-label">User-configured · assumption</span>
                     </label>
                   ))}
                 </div>
