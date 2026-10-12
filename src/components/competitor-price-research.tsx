@@ -123,7 +123,7 @@ export default function CompetitorPriceResearch({ onAppSelected, onEnterManual }
       </div>
 
       <form className="competitor-search-form discovery-search-form" onSubmit={search} aria-busy={searchState === "loading"}>
-        <label htmlFor="competitor-search-term">Find your app</label>
+        <label className="sr-only" htmlFor="competitor-search-term">Search the App Store</label>
         <div className="competitor-search-controls">
           <input id="competitor-search-term" type="search" value={term} maxLength={80} placeholder="Search the App Store…" onChange={(event) => setTerm(event.target.value)} />
           <button type="submit" disabled={searchState === "loading" || priceState === "loading"}>{searchState === "loading" ? <><span className="competitor-spinner" aria-hidden="true" />Searching…</> : "Search apps"}</button>
