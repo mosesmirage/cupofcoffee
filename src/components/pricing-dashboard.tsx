@@ -47,6 +47,11 @@ import CompetitorPriceResearch, { SelectedAppStorefronts } from "@/components/co
 import type { AppleApp, ApplePriceComparison } from "@/lib/apple-app-store/client.ts";
 import { getAppReferencePrice } from "@/lib/apple-app-store/workflow.ts";
 import { manualEntryReducer } from "@/lib/pricing/manual-entry.ts";
+import {
+  mergePurchasingPowerSnapshot,
+  setManualPurchasingPowerFactor,
+  type PurchasingPowerSettings,
+} from "@/lib/pricing/purchasing-power.ts";
 
 const flags: Record<MarketId, string> = { US: "🇺🇸", TR: "🇹🇷", UK: "🇬🇧", DE: "🇩🇪" };
 const marketNames = Object.fromEntries(INITIAL_MARKET_IDENTITIES.map(({ id, name }) => [id, name])) as Record<MarketId, string>;
@@ -196,7 +201,8 @@ function makePricingState(
       : { status: "user-configured", note: "Exchange rate manually overridden by the user; not a live rate." };
     if (purchasingPowers[market.id] !== undefined) {
       market.purchasingPower.mode = "relative-factor";
-      market.purchasingPower.provenance = { status: "user-configured", note: "Purchasing-power factor manually overridden by the user." };
+      market.purchasingPower.provenance = purchasingPowerProvenance[market.id]
+        ?? { status: "user-configured", note: "Purchasing-power factor manually overridden by the user." };
     } else if (purchasingPowerProvenance[market.id]) {
       market.purchasingPower.mode = "relative-factor";
       market.purchasingPower.provenance = purchasingPowerProvenance[market.id]!;
@@ -235,8 +241,8 @@ export default function PricingDashboard() {
   const [appLookupMessage, setAppLookupMessage] = useState("");
   const [referencePriceSource, setReferencePriceSource] = useState("Manual reference price");
   const [rates, setRates] = useState<Partial<Record<MarketId, Partial<Record<CurrencyCode, string>>>>>(() => ({}));
-  const [purchasingPowers, setPurchasingPowers] = useState<Partial<Record<MarketId, string>>>({});
-  const [purchasingPowerProvenance, setPurchasingPowerProvenance] = useState<Partial<Record<MarketId, import("@/lib/pricing/config.ts").Provenance>>>({});
+  const [purchasingPowerSettings, setPurchasingPowerSettings] = useState<PurchasingPowerSettings>({ factors: {}, provenance: {} });
+  const { factors: purchasingPowers, provenance: purchasingPowerProvenance } = purchasingPowerSettings;
   const [coffeeOverrides, setCoffeeOverrides] = useState<Partial<Record<MarketId, CoffeeBenchmarkOverrideDraft>>>({});
   const [coffeeOverridesLoaded, setCoffeeOverridesLoaded] = useState(false);
   const [coffeeNow, setCoffeeNow] = useState(0);
@@ -270,8 +276,7 @@ export default function PricingDashboard() {
       })
       .then((snapshot) => {
         if (!active) return;
-        setPurchasingPowers((current) => Object.fromEntries(INITIAL_MARKET_IDENTITIES.map(({ id }) => [id, current[id] ?? String(snapshot.factors[id])])) as Partial<Record<MarketId, string>>);
-        setPurchasingPowerProvenance(snapshot.provenance);
+        setPurchasingPowerSettings((current) => mergePurchasingPowerSnapshot(current, snapshot));
       })
       .catch(() => { /* Retain the existing clearly illustrative factors when comparable annual data is unavailable. */ });
     return () => { active = false; };
@@ -528,12 +533,6 @@ export default function PricingDashboard() {
                                 <ol className="explanation-steps">
                                   {explainRecommendation({ amount: Number(basePrice), currency: baseCurrency }, market!, strategyConfig, result).map((line, lineIndex) => <li key={lineIndex}>{line}</li>)}
                                 </ol>
-                                <div className="provenance-details">
-                                  <p><strong>Exchange rate</strong><span>{explainProvenance(result.provenance.exchangeRate)}</span></p>
-                                  <p><strong>Purchasing power</strong><span>{result.provenance.purchasingPower.status === "sourced" ? "Applied" : explainProvenance(result.provenance.purchasingPower)}</span></p>
-                                  <p><strong>Strategy</strong><span>{explainProvenance(result.provenance.strategy)}</span></p>
-                                  <p><strong>Local price points</strong><span>{explainProvenance(result.provenance.pricePoints)}</span></p>
-                                </div>
                               </details>
                             </div>
                           );
@@ -545,6 +544,28 @@ export default function PricingDashboard() {
                 );
               })}
             </div>
+            <details className="recommendation-data-disclosure">
+              <summary>Sources &amp; assumptions <span>View once for all markets</span></summary>
+              <div className="recommendation-data-content">
+                <p className="recommendation-data-method">When comparable data is available, purchasing-power factors use the World Bank private-consumption PPP indicator (PA.NUS.PRVT.PP) with annual-average USD exchange rates from Frankfurter, normalized to a US baseline. If unavailable, the app uses visibly labeled illustrative factors.</p>
+                <div className="recommendation-data-grid">
+                  {INITIAL_MARKET_IDENTITIES.map((identity) => {
+                    const market = pricing.markets[identity.id];
+                    return (
+                      <section className="recommendation-data-market" key={identity.id}>
+                        <h3><span aria-hidden="true">{flags[identity.id]}</span> {identity.name}</h3>
+                        <dl>
+                          <div><dt>Exchange rate</dt><dd>{market ? explainProvenance(market.exchangeRateProvenance) : "Unavailable"}</dd></div>
+                          <div><dt>Purchasing power</dt><dd>{market ? explainProvenance(market.purchasingPower.provenance) : "Unavailable"}</dd></div>
+                          <div><dt>Local price points</dt><dd>{market ? explainProvenance(market.pricePointsProvenance) : "Unavailable"}</dd></div>
+                        </dl>
+                      </section>
+                    );
+                  })}
+                </div>
+                <p className="recommendation-data-strategies"><strong>Strategy factors</strong> {STRATEGY_DEFINITIONS.map(({ id, label }) => `${label} ${formatNumber(Number(strategyFactors[id]), 2)}×`).join(" · ")} · Editable product assumptions, not empirically calibrated.</p>
+              </div>
+            </details>
             <p className="recommendation-note">Suggestions use the visible assumptions and do not estimate willingness to pay or an optimal price.</p>
           </section>
 
@@ -608,7 +629,7 @@ export default function PricingDashboard() {
                         <p className="exchange-rate-status">{exchangeRateDescription(rateInfo, rateWasManuallyEdited)}</p>
                         <div className="advanced-input-grid">
                           <label>Exchange rate <small>{identity.currency} per 1 {baseCurrency}</small><input type="number" min="0.000001" step="any" value={rates[identity.id]?.[baseCurrency] ?? rateInfo.rateToLocal} disabled={identity.currency === baseCurrency} aria-invalid={Boolean(marketError?.includes("Exchange rate"))} onChange={(event) => setRates((current) => ({ ...current, [identity.id]: { ...current[identity.id], [baseCurrency]: event.target.value } }))} /></label>
-                          <label>Purchasing-power factor <small>US baseline = 1</small><input type="number" min="0.000001" step="0.01" value={purchasingPowers[identity.id] ?? demoMarket.purchasingPowerFactor} disabled={identity.id === "US"} aria-invalid={Boolean(marketError?.toLowerCase().includes("purchasing-power"))} onChange={(event) => setPurchasingPowers((current) => ({ ...current, [identity.id]: event.target.value }))} /></label>
+                          <label>Purchasing-power factor <small>US baseline = 1</small><input type="number" min="0.000001" step="0.01" value={purchasingPowers[identity.id] ?? demoMarket.purchasingPowerFactor} disabled={identity.id === "US"} aria-invalid={Boolean(marketError?.toLowerCase().includes("purchasing-power"))} onChange={(event) => setPurchasingPowerSettings((current) => setManualPurchasingPowerFactor(current, identity.id, event.target.value))} /></label>
                           <label className="price-points-field">Supported local price points <small>{provenanceLabel(market!.pricePointsProvenance)} · comma-separated</small><input type="text" value={pricePoints[identity.id] ?? demoMarket.pricePoints.join(", ")} aria-invalid={Boolean(marketError?.includes("Price points"))} onChange={(event) => setPricePoints((current) => ({ ...current, [identity.id]: event.target.value }))} /></label>
                         </div>
                       </article>

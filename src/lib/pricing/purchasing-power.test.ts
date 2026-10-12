@@ -4,7 +4,10 @@ import {
   averageAnnualFrankfurterFx,
   calculateRelativePriceLevelFactors,
   fetchPurchasingPowerSnapshot,
+  mergePurchasingPowerSnapshot,
   selectCommonPppYear,
+  setManualPurchasingPowerFactor,
+  type PurchasingPowerSnapshot,
 } from "./purchasing-power.ts";
 
 const pppRows = [
@@ -68,4 +71,27 @@ test("returns sourced factors from paired API responses and rejects API failures
   assert.equal(snapshot.factors.TR, 0.5);
   assert.equal(snapshot.provenance.TR.status, "sourced");
   await assert.rejects(fetchPurchasingPowerSnapshot({ fetchImpl: async () => new Response("{}", { status: 503 }), cache: null }), /HTTP 503/);
+});
+
+test("keeps fetched World Bank factors sourced until a user edits them", () => {
+  const source = (year: string) => ({
+    year: Number(year),
+    factors: { US: 1, TR: 0.5, UK: 0.875, DE: 0.89 },
+    provenance: Object.fromEntries(["US", "TR", "UK", "DE"].map((id) => [id, {
+      status: "sourced" as const,
+      source: "World Bank PA.NUS.PRVT.PP + Frankfurter annual average FX",
+      observedAt: year,
+    }])) as PurchasingPowerSnapshot["provenance"],
+  });
+  const loaded = mergePurchasingPowerSnapshot({ factors: {}, provenance: {} }, source("2022"));
+  assert.equal(loaded.factors.TR, "0.5");
+  assert.equal(loaded.provenance.TR?.status, "sourced");
+
+  const edited = setManualPurchasingPowerFactor(loaded, "TR", "0.46");
+  assert.equal(edited.provenance.TR?.status, "user-configured");
+  const refreshed = mergePurchasingPowerSnapshot(edited, source("2023"));
+  assert.equal(refreshed.factors.TR, "0.46");
+  assert.equal(refreshed.provenance.TR?.status, "user-configured");
+  assert.equal(refreshed.factors.UK, "0.875");
+  assert.equal(refreshed.provenance.UK?.status, "sourced");
 });

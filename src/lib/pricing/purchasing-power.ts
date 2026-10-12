@@ -10,7 +10,42 @@ export type PurchasingPowerSnapshot = {
   factors: Record<MarketId, number>;
   provenance: Record<MarketId, Provenance>;
 };
+export type PurchasingPowerSettings = {
+  factors: Partial<Record<MarketId, string>>;
+  provenance: Partial<Record<MarketId, Provenance>>;
+};
 type Options = { fetchImpl?: typeof fetch; timeoutMs?: number; now?: () => Date; cache?: Storage | null };
+
+/** Load sourced factors while preserving values the user has explicitly edited. */
+export function mergePurchasingPowerSnapshot(
+  current: PurchasingPowerSettings,
+  snapshot: PurchasingPowerSnapshot,
+): PurchasingPowerSettings {
+  const factors: PurchasingPowerSettings["factors"] = {};
+  const provenance: PurchasingPowerSettings["provenance"] = {};
+  for (const id of Object.keys(COUNTRY_CODES) as MarketId[]) {
+    const userEdited = current.provenance[id]?.status === "user-configured";
+    factors[id] = userEdited && current.factors[id] !== undefined
+      ? current.factors[id]
+      : String(snapshot.factors[id]);
+    provenance[id] = userEdited ? current.provenance[id] : snapshot.provenance[id];
+  }
+  return { factors, provenance };
+}
+
+export function setManualPurchasingPowerFactor(
+  current: PurchasingPowerSettings,
+  marketId: MarketId,
+  factor: string,
+): PurchasingPowerSettings {
+  return {
+    factors: { ...current.factors, [marketId]: factor },
+    provenance: {
+      ...current.provenance,
+      [marketId]: { status: "user-configured", note: "Purchasing-power factor manually overridden by the user." },
+    },
+  };
+}
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
