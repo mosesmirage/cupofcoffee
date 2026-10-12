@@ -673,6 +673,9 @@ export default function PricingDashboard() {
                   {INITIAL_MARKET_IDENTITIES.map((identity) => {
                     const result = revenue.results.find(({ marketId }) => marketId === identity.id);
                     const selectedPrice = selectedStrategyPrices[identity.id];
+                    const gross = result?.grossRevenue.amount;
+                    const net = result?.estimatedNet?.amount;
+                    const netShare = net === undefined || gross === undefined ? undefined : gross === 0 ? 0 : (net / gross) * 100;
                     return (
                       <article className="revenue-result-card" key={identity.id}>
                         <div className="revenue-result-market"><span>{flags[identity.id]}</span><strong>{marketNames[identity.id]}</strong></div>
@@ -680,11 +683,15 @@ export default function PricingDashboard() {
                         <div className="revenue-result-line"><span>Expected purchases</span><b>{result ? formatNumber(result.expectedPurchases, 2) : "Unavailable"}</b></div>
                         <div className="revenue-result-line"><span>Gross scenario</span><b>{result ? formatMoney(result.grossRevenue.amount, result.grossRevenue.currency) : "Unavailable"}</b></div>
                         <div className="revenue-result-line"><span>Net after configured fee</span><b>{result ? (result.estimatedNet ? formatMoney(result.estimatedNet.amount, result.estimatedNet.currency) : "Not modeled") : "Unavailable"}</b></div>
+                        {result && <div className="scenario-bars" aria-label={netShare === undefined ? "Net revenue is not modeled for " + marketNames[result.marketId] : "Net revenue is " + formatNumber(netShare, 1) + " percent of gross for " + marketNames[result.marketId]}>
+                          <div><span>Gross</span><i className="gross-bar" /></div>
+                          {netShare === undefined ? <small className="unmodeled-net">Net is not modeled because no fee rate is configured.</small> : <div><span>Net share</span><i className="net-bar" style={{ width: netShare + "%" }} /></div>}
+                        </div>}
                       </article>
                     );
                   })}
                 </div>
-                <p className="chart-note">Revenue values use separate local currencies and are not ranked across markets.</p>
+                <p className="chart-note">Bars show net as a share of gross within each market. Revenue values use separate local currencies, so no cross-market total or ranking is implied.</p>
               </div>
             </section>
           </details>

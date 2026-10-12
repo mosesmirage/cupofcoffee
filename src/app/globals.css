@@ -131,6 +131,8 @@ input[aria-invalid="true"] { border-color:#d7917f !important; box-shadow:0 0 0 2
 .revenue-results { margin-top:15px; border:1px solid #e4e9e2; border-radius:10px; background:#fff; padding:13px; }.revenue-results-header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; }.revenue-results-header strong { color:#3e5042; font-family:Georgia,serif; font-size:15px; font-weight:500; }.revenue-results-header span { color:#9aa49a; font-size:8px; text-align:right; }
 .revenue-result-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }.revenue-result-card { min-width:0; border:1px solid #edf0eb; border-radius:7px; padding:9px; }.revenue-result-market { display:flex; align-items:center; gap:6px; margin-bottom:9px; color:#435348; font-size:9px; }.revenue-result-market>span { font-size:14px; }.revenue-result-market strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .revenue-result-line { display:flex; justify-content:space-between; gap:5px; margin:5px 0; color:#8a948a; font-size:8px; }.revenue-result-line b { color:#46584a; font-size:8px; font-weight:700; white-space:nowrap; }
+.scenario-bars { display:grid; gap:5px; margin-top:9px; border-top:1px solid #eef1ec; padding-top:8px; }.scenario-bars>div { display:grid; grid-template-columns:55px 1fr; align-items:center; gap:6px; color:#9aa49a; font-size:7px; }.scenario-bars i { display:block; height:6px; border-radius:99px; }.gross-bar { width:100%; background:#dce7da; }.net-bar { max-width:100%; background:#6f9474; }
+.unmodeled-net { color:#a09b84; font-size:7px; }
 .field-error { margin:7px 0 0; color:#a24e3d; font-size:9px; }
 .explanation-steps { display:grid; gap:7px; margin:10px 0 9px; padding-left:18px; color:#68766a; }
 .explanation-steps li { padding-left:2px; font-size:8px; line-height:1.55; }
@@ -193,6 +195,8 @@ input[aria-invalid="true"] { border-color:#d7917f !important; box-shadow:0 0 0 2
 .revenue-result-market,
 .revenue-result-line,
 .revenue-result-line b,
+.scenario-bars>div,
+.unmodeled-net,
 .revenue-error strong,
 .revenue-error span,
 .hypothetical-stamp,
