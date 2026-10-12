@@ -170,7 +170,7 @@ export function SelectedAppStorefronts({
       <div className="competitor-comparison-heading">
         <div className="selected-app-identity">
           {app.artworkUrl ? <span className="competitor-app-icon" role="img" aria-label={`${app.name} app icon`} style={{ backgroundImage: `url("${app.artworkUrl}")` }} /> : null}
-          <div><span className="competitor-selected-label">SELECTED APP · APP DOWNLOAD</span><h2 id="selected-app-heading">{app.name}</h2><p>{app.developer}</p></div>
+          <div><span className="competitor-selected-label">SELECTED APP</span><h2 id="selected-app-heading">{app.name}</h2><p>{app.developer}</p></div>
         </div>
         <div className="selected-app-actions">
           {app.trackViewUrl && <a href={app.trackViewUrl} target="_blank" rel="noreferrer">View on App Store</a>}
@@ -183,7 +183,7 @@ export function SelectedAppStorefronts({
           const price = result?.status === "available" ? result.app?.price : undefined;
           return <article className="competitor-store-card" key={market.id}>
             <span className="competitor-store-name"><span className="competitor-country-flag" role="img" aria-label={`${market.name} flag`}>{storefrontFlags[market.id]}</span>{market.name}</span>
-            {price ? <><strong>{price.isFree ? "Free" : price.formattedPrice}</strong><span className="competitor-store-currency">{price.currency} <i>{price.isFree ? "Free download" : "App download"}</i></span></> : <><strong className="unavailable-price">Price unavailable</strong><span>{result?.message ?? "Storefront price could not be checked."}</span></>}
+            {price ? <><strong>{price.isFree ? "Free" : price.formattedPrice}</strong><span className="competitor-store-currency">{price.currency}</span></> : <><strong className="unavailable-price">Price unavailable</strong><span>{result?.message ?? "Storefront price could not be checked."}</span></>}
           </article>;
         })}
       </div>
