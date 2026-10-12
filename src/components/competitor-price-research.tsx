@@ -117,8 +117,8 @@ export default function CompetitorPriceResearch({ onAppSelected, onEnterManual }
       <div className="competitor-research-header">
         <div>
           <span className="section-eyebrow">APP PRICING INTELLIGENCE</span>
-          <h1 id="competitor-price-title">Price your app for every market.</h1>
-          <p>One app. Four markets. Smarter pricing.</p>
+          <h1 id="competitor-price-title">Price your app across four markets.</h1>
+          <p>One app. Smarter local pricing.</p>
         </div>
       </div>
 
