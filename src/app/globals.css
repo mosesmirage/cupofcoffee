@@ -685,17 +685,14 @@ input[aria-invalid="true"] { border-color:#d7917f !important; box-shadow:0 0 0 2
 .current-market-price > strong { min-width: 0; color: #526454; font-size: 13px; font-weight: 700; text-align: right; overflow-wrap: anywhere; }
 .current-market-price.current-free > strong { color: #59765d; }
 .current-market-price small { grid-column: 1 / -1; color: #929b92; font-size: 10px; line-height: 1.4; }
+.current-market-price .current-coffee-equivalent { color: #657967; font-size: 10px; line-height: 1.4; }
 .recommendation-strategy-list { display: grid; }
 .recommendation-strategy { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 2px 7px; border-top: 1px solid #edf0eb; padding: 10px 1px 8px; }
 .recommendation-strategy-label { display: grid; min-width: 0; gap: 2px; }
 .recommendation-strategy-label strong { color: #46584a; font-size: 12px; font-weight: 700; }
 .recommendation-strategy-label span { color: #889288; font-size: 10px; line-height: 1.35; }
 .recommendation-price { color: #304b38; font-family: Georgia, "Times New Roman", serif; font-size: 21px; font-weight: 500; white-space: nowrap; }
-.recommendation-coffee-comparison { grid-column: 1 / -1; display: grid; justify-items: start; gap: 3px; min-width: 0; border-radius: 7px; background: #f7f8f5; padding: 7px 9px; color: #7b887c; font-size: 11px; line-height: 1.4; }
-.recommendation-coffee-label { display: flex; align-items: center; gap: 5px; color: #758477; font-size: 9px; font-weight: 700; letter-spacing: .65px; }
-.recommendation-coffee-value,.recommendation-coffee-status { display: grid; min-width: 0; gap: 1px; }
-.recommendation-coffee-value strong { color: #526b56; font-size: 12px; font-weight: 650; }
-.recommendation-coffee-status { color: #879187; }
+.recommendation-coffee-comparison { grid-column: 1 / -1; min-width: 0; color: #657967; font-size: 11px; line-height: 1.4; }
 .recommendation-difference { grid-column: 1 / -1; color: #79887a; font-size: 10px; font-weight: 600; }
 .recommendation-calculation { grid-column: 1 / -1; margin-top: 3px; border-top: 1px dashed #e8ece6; padding-top: 6px; }
 .recommendation-calculation summary,.methodology-disclosure summary { color: #5f7662; cursor: pointer; font-size: 11px; font-weight: 650; }

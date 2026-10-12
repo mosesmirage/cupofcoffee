@@ -480,6 +480,13 @@ export default function PricingDashboard() {
                 const currentPriceLabel = currentPrice
                   ? currentPrice.isFree ? "Free" : currentPrice.formattedPrice
                   : "Price unavailable";
+                const currentCoffeeComparison = currentPrice && !currentPrice.isFree
+                  ? coffeeComparisonForDisplay(
+                    { amount: currentPrice.amount, currency: identity.currency },
+                    coffeeResolutions[identity.id],
+                    coffeeNow,
+                  )
+                  : undefined;
                 return (
                   <article className="recommendation-market-card" key={identity.id}>
                     <header className="recommendation-market-heading">
@@ -489,6 +496,7 @@ export default function PricingDashboard() {
                     <div className={"current-market-price" + (currentPrice?.isFree ? " current-free" : "")}>
                       <span>Current App Store price</span>
                       <strong>{currentPriceLabel}</strong>
+                      {currentCoffeeComparison?.status === "available" && <small className="current-coffee-equivalent">☕ About {formatNumber(currentCoffeeComparison.cups, 1)} cups · {formatMoney(currentCoffeeComparison.price.amount, currentCoffeeComparison.price.currency)} coffee</small>}
                       {!currentPrice && <small>{appComparison ? storeResult?.message ?? "No matching storefront price." : "No storefront listing selected."}</small>}
                     </div>
                     {marketError ? (
@@ -510,12 +518,7 @@ export default function PricingDashboard() {
                                 <span>{strategyCopy[strategy.id]}</span>
                               </div>
                               <b className="recommendation-price">{formatMoney(result.finalPrice.amount, identity.currency)}</b>
-                              <div className="recommendation-coffee-comparison" aria-label="Coffee comparison">
-                                <span className="recommendation-coffee-label"><span aria-hidden="true">☕</span> COFFEE COMPARISON</span>
-                                {coffeeComparison.status === "available"
-                                  ? <span className="recommendation-coffee-value"><span>{coffeeComparison.provenance === "user-entered" ? "Your benchmark" : coffeeComparison.coffeeType} · {formatMoney(coffeeComparison.price.amount, coffeeComparison.price.currency)}</span><strong>About {formatNumber(coffeeComparison.cups, 1)} cups of coffee</strong></span>
-                                  : <span className="recommendation-coffee-status">Coffee comparison unavailable</span>}
-                              </div>
+                              {coffeeComparison.status === "available" && <div className="recommendation-coffee-comparison" aria-label={`About ${formatNumber(coffeeComparison.cups, 1)} cups of coffee`}><span>☕ About {formatNumber(coffeeComparison.cups, 1)} cups of coffee</span></div>}
                               {currentPrice && <span className="recommendation-difference">{recommendationDifference(result.finalPrice.amount, currentPrice.amount, identity.currency)}</span>}
                               <details className="recommendation-calculation">
                                 <summary>How was this calculated?</summary>
