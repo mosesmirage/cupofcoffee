@@ -464,7 +464,6 @@ export default function PricingDashboard() {
           <section className="localized-recommendations" id="markets" aria-labelledby="recommendations-title">
             <div className="recommendations-heading">
               <div>
-                <span className="section-eyebrow">PRICING INTELLIGENCE · FOUR MARKETS</span>
                 <h1 id="recommendations-title">Localized pricing recommendations</h1>
                 <p>Compare your current price with three pricing strategies across markets.</p>
                 <p className="coffee-reference-summary"><span aria-hidden="true">☕</span> Coffee reference: {coffeeReferenceLabel}.</p>
@@ -510,7 +509,6 @@ export default function PricingDashboard() {
                         {STRATEGY_DEFINITIONS.map((strategy, index) => {
                           const result = results[index];
                           if (!result) return null;
-                          const strategyConfig = { ...DEMO_STRATEGIES[index], factor: Number(strategyFactors[strategy.id]) };
                           const coffeeComparison = coffeeComparisonForDisplay(result.finalPrice, coffeeResolutions[identity.id], coffeeNow);
                           return (
                             <div className={"recommendation-strategy recommendation-" + strategy.id} key={strategy.id}>
@@ -520,12 +518,6 @@ export default function PricingDashboard() {
                               <b className="recommendation-price">{formatMoney(result.finalPrice.amount, identity.currency)}</b>
                               {coffeeComparison.status === "available" && <div className="recommendation-coffee-comparison" aria-label={`About ${formatNumber(coffeeComparison.cups, 1)} cups of coffee`}><span>☕ About {formatNumber(coffeeComparison.cups, 1)} cups of coffee</span></div>}
                               {currentPrice && <span className="recommendation-difference">{recommendationDifference(result.finalPrice.amount, currentPrice.amount, identity.currency)}</span>}
-                              <details className="recommendation-calculation">
-                                <summary>How was this calculated?</summary>
-                                <ol className="explanation-steps">
-                                  {explainRecommendation({ amount: Number(basePrice), currency: baseCurrency }, market!, strategyConfig, result).map((line, lineIndex) => <li key={lineIndex}>{line}</li>)}
-                                </ol>
-                              </details>
                             </div>
                           );
                         })}
@@ -537,8 +529,38 @@ export default function PricingDashboard() {
               })}
             </div>
             <details className="recommendation-data-disclosure">
-              <summary>Sources, assumptions &amp; scenario limits <span>Optional detail</span></summary>
+              <summary>Sources, assumptions, calculations &amp; scenario limits <span>Optional detail</span></summary>
               <div className="recommendation-data-content">
+                <h2 className="recommendation-data-subheading">How recommendations are calculated</h2>
+                <p className="recommendation-data-method">For each market and strategy: convert the base price using the exchange rate → apply the purchasing-power factor → apply the strategy factor → round to the nearest local price point (ties go to the lower price). The coffee comparison is informational and does not affect the recommendation.</p>
+                <div className="recommendation-calculation-markets">
+                  {INITIAL_MARKET_IDENTITIES.map((identity) => {
+                    const market = pricing.markets[identity.id];
+                    const results = pricing.results[identity.id] ?? [];
+                    if (!market || results.length === 0) return null;
+                    return (
+                      <details className="recommendation-calculation-market" key={identity.id}>
+                        <summary><span aria-hidden="true">{flags[identity.id]}</span> {identity.name}</summary>
+                        <div className="recommendation-calculation-market-content">
+                          {STRATEGY_DEFINITIONS.map((strategy, index) => {
+                            const result = results[index];
+                            if (!result) return null;
+                            const strategyConfig = { ...DEMO_STRATEGIES[index], factor: Number(strategyFactors[strategy.id]) };
+                            return (
+                              <section className="recommendation-calculation-strategy" key={strategy.id}>
+                                <h3>{strategy.label} · {formatMoney(result.finalPrice.amount, identity.currency)}</h3>
+                                <ol className="explanation-steps">
+                                  {explainRecommendation({ amount: Number(basePrice), currency: baseCurrency }, market, strategyConfig, result).map((line, lineIndex) => <li key={lineIndex}>{line}</li>)}
+                                </ol>
+                              </section>
+                            );
+                          })}
+                        </div>
+                      </details>
+                    );
+                  })}
+                </div>
+                <h2 className="recommendation-data-subheading">Data sources and assumptions</h2>
                 <p className="recommendation-data-method">Market assumptions are editable. Demo values are illustrative; sourced data is identified with its source and date. Recommendations are decision support, not predictions of demand or an optimal price.</p>
                 <p className="recommendation-data-method">When comparable data is available, purchasing-power factors use the World Bank private-consumption PPP indicator (PA.NUS.PRVT.PP) with annual-average USD exchange rates from Frankfurter, normalized to a US baseline. If unavailable, the app uses visibly labeled illustrative factors.</p>
                 <div className="recommendation-data-grid">
