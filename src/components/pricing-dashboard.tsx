@@ -528,60 +528,6 @@ export default function PricingDashboard() {
                 );
               })}
             </div>
-            <details className="recommendation-data-disclosure">
-              <summary>Sources, assumptions, calculations &amp; scenario limits <span>Optional detail</span></summary>
-              <div className="recommendation-data-content">
-                <h2 className="recommendation-data-subheading">How recommendations are calculated</h2>
-                <p className="recommendation-data-method">For each market and strategy: convert the base price using the exchange rate → apply the purchasing-power factor → apply the strategy factor → round to the nearest local price point (ties go to the lower price). The coffee comparison is informational and does not affect the recommendation.</p>
-                <div className="recommendation-calculation-markets">
-                  {INITIAL_MARKET_IDENTITIES.map((identity) => {
-                    const market = pricing.markets[identity.id];
-                    const results = pricing.results[identity.id] ?? [];
-                    if (!market || results.length === 0) return null;
-                    return (
-                      <details className="recommendation-calculation-market" key={identity.id}>
-                        <summary><span aria-hidden="true">{flags[identity.id]}</span> {identity.name}</summary>
-                        <div className="recommendation-calculation-market-content">
-                          {STRATEGY_DEFINITIONS.map((strategy, index) => {
-                            const result = results[index];
-                            if (!result) return null;
-                            const strategyConfig = { ...DEMO_STRATEGIES[index], factor: Number(strategyFactors[strategy.id]) };
-                            return (
-                              <section className="recommendation-calculation-strategy" key={strategy.id}>
-                                <h3>{strategy.label} · {formatMoney(result.finalPrice.amount, identity.currency)}</h3>
-                                <ol className="explanation-steps">
-                                  {explainRecommendation({ amount: Number(basePrice), currency: baseCurrency }, market, strategyConfig, result).map((line, lineIndex) => <li key={lineIndex}>{line}</li>)}
-                                </ol>
-                              </section>
-                            );
-                          })}
-                        </div>
-                      </details>
-                    );
-                  })}
-                </div>
-                <h2 className="recommendation-data-subheading">Data sources and assumptions</h2>
-                <p className="recommendation-data-method">Market assumptions are editable. Demo values are illustrative; sourced data is identified with its source and date. Recommendations are decision support, not predictions of demand or an optimal price.</p>
-                <p className="recommendation-data-method">When comparable data is available, purchasing-power factors use the World Bank private-consumption PPP indicator (PA.NUS.PRVT.PP) with annual-average USD exchange rates from Frankfurter, normalized to a US baseline. If unavailable, the app uses visibly labeled illustrative factors.</p>
-                <div className="recommendation-data-grid">
-                  {INITIAL_MARKET_IDENTITIES.map((identity) => {
-                    const market = pricing.markets[identity.id];
-                    return (
-                      <section className="recommendation-data-market" key={identity.id}>
-                        <h3><span aria-hidden="true">{flags[identity.id]}</span> {identity.name}</h3>
-                        <dl>
-                          <div><dt>Exchange rate</dt><dd>{market ? explainProvenance(market.exchangeRateProvenance) : "Unavailable"}</dd></div>
-                          <div><dt>Purchasing power</dt><dd>{market ? explainProvenance(market.purchasingPower.provenance) : "Unavailable"}</dd></div>
-                          <div><dt>Local price points</dt><dd>{market ? explainProvenance(market.pricePointsProvenance) : "Unavailable"}</dd></div>
-                        </dl>
-                      </section>
-                    );
-                  })}
-                </div>
-                <p className="recommendation-data-strategies"><strong>Strategy factors</strong> {STRATEGY_DEFINITIONS.map(({ id, label }) => `${label} ${formatNumber(Number(strategyFactors[id]), 2)}×`).join(" · ")} · Editable product assumptions, not empirically calibrated.</p>
-                <p className="recommendation-data-limitations"><strong>Revenue scenario limits</strong> No market reach, demand response to price, taxes, refunds, platform rules, ranking effects, or cross-market behavior are modeled. Expected purchases may be fractional.</p>
-              </div>
-            </details>
           </section>
 
           <details className="advanced-settings">
@@ -657,7 +603,7 @@ export default function PricingDashboard() {
           </details>
 
           <details className="coffee-context-section">
-            <summary>Coffee price context <span>Optional local benchmark comparison</span></summary>
+            <summary>Coffee price context <span>Local benchmark comparison</span></summary>
             <p className="coffee-context-intro">Coffee is a local spending reference only and does not change app prices.</p>
             <div className="coffee-context-market-grid">
               {INITIAL_MARKET_IDENTITIES.map((identity) => {
@@ -686,8 +632,8 @@ export default function PricingDashboard() {
                       <div className="coffee-edit-grid">
                         <label>My price <small>Currency fixed to {identity.currency}; stored in this browser</small><input type="number" min="0.000001" step="0.01" value={coffeeDraft?.amount ?? ""} placeholder={coffeeBenchmark?.status === "illustrative" ? String(coffeeBenchmark.price.amount) : "Enter your price"} aria-invalid={coffeeResolution.status === "needs-review"} onChange={(event) => setCoffeeOverrides((current) => updateCoffeeOverrideDraft(current, identity.id, "amount", event.target.value))} /></label>
                         <label>Coffee type <small>Required · not independently verified</small><input type="text" value={coffeeDraft?.coffeeType ?? ""} placeholder={coffeeBenchmark?.status === "illustrative" ? "Type not specified in demo" : "e.g. regular cappuccino"} aria-invalid={coffeeResolution.status === "needs-review" && coffeeResolution.errors.some((error) => error.includes("type"))} onChange={(event) => setCoffeeOverrides((current) => updateCoffeeOverrideDraft(current, identity.id, "coffeeType", event.target.value))} /></label>
-                        <label>City or scope <small>Optional geographic context</small><input type="text" value={coffeeDraft?.city ?? ""} placeholder="Optional city" onChange={(event) => setCoffeeOverrides((current) => updateCoffeeOverrideDraft(current, identity.id, "city", event.target.value))} /></label>
-                        <label>Source note <small>Optional note; not proof of verification</small><input type="text" value={coffeeDraft?.sourceNote ?? ""} placeholder="Where you observed it" onChange={(event) => setCoffeeOverrides((current) => updateCoffeeOverrideDraft(current, identity.id, "sourceNote", event.target.value))} /></label>
+                        <label>City or scope<input type="text" value={coffeeDraft?.city ?? ""} placeholder="City" onChange={(event) => setCoffeeOverrides((current) => updateCoffeeOverrideDraft(current, identity.id, "city", event.target.value))} /></label>
+                        <label>Source note <small>A note is not verification</small><input type="text" value={coffeeDraft?.sourceNote ?? ""} placeholder="Where you observed it" onChange={(event) => setCoffeeOverrides((current) => updateCoffeeOverrideDraft(current, identity.id, "sourceNote", event.target.value))} /></label>
                         <label>Observation date <small>YYYY-MM-DD or YYYY-MM; ratios require a current date</small><input type="text" value={coffeeDraft?.observedAt ?? ""} placeholder="YYYY-MM-DD" aria-invalid={coffeeResolution.status === "needs-review" && coffeeResolution.errors.some((error) => error.includes("date"))} onChange={(event) => setCoffeeOverrides((current) => updateCoffeeOverrideDraft(current, identity.id, "observedAt", event.target.value))} /></label>
                         {coffeeDraft && <p className="coffee-override-help" role={coffeeResolution.status === "needs-review" ? "alert" : "status"}>{coffeeResolution.status === "needs-review" ? coffeeResolution.errors.join(" ") : "User-entered · not independently verified."}</p>}
                         <button className="coffee-reset-button" type="button" onClick={() => setCoffeeOverrides((current) => clearCoffeeOverrideDraft(current, identity.id))}>{[...VERIFIED_COFFEE_BENCHMARKS, ...CANDIDATE_COFFEE_BENCHMARKS].some((record) => record.marketId === identity.id) ? "Reset to reference observation" : "Use illustrative demo value"}</button>
@@ -700,7 +646,7 @@ export default function PricingDashboard() {
           </details>
 
           <details className="revenue-scenarios-accordion">
-            <summary>Revenue scenarios <span>Optional simulator</span></summary>
+            <summary>Revenue scenarios <span>Hypothetical estimates</span></summary>
             <section className="revenue-section" id="revenue" aria-labelledby="revenue-title">
               <div className="section-title-row"><div><span className="section-eyebrow">SCENARIO EXPLORER</span><h2 id="revenue-title">Revenue assumptions</h2></div><label className="scenario-strategy-select">Price strategy<select value={revenueStrategy} onChange={(event) => setRevenueStrategy(event.target.value as StrategyId)}>{STRATEGY_DEFINITIONS.map((strategy) => <option key={strategy.id} value={strategy.id}>{strategy.label}</option>)}</select></label></div>
               <p className="section-lede">Set audience, conversion, and fee assumptions for each market. Results are hypothetical, not predictions. Gross = audience × conversion rate × local app price; net = gross × (1 − fee).</p>
@@ -747,6 +693,61 @@ export default function PricingDashboard() {
                 <p className="chart-note">Bars show net as a share of gross within each market. Revenue values use separate local currencies, so no cross-market total or ranking is implied.</p>
               </div>
             </section>
+          </details>
+
+          <details className="recommendation-data-disclosure">
+            <summary>Sources, assumptions, calculations &amp; scenario limits</summary>
+            <div className="recommendation-data-content">
+              <h2 className="recommendation-data-subheading">How recommendations are calculated</h2>
+              <p className="recommendation-data-method">For each market and strategy: convert the base price using the exchange rate → apply the purchasing-power factor → apply the strategy factor → round to the nearest local price point (ties go to the lower price). The coffee comparison is informational and does not affect the recommendation.</p>
+              <div className="recommendation-calculation-markets">
+                {INITIAL_MARKET_IDENTITIES.map((identity) => {
+                  const market = pricing.markets[identity.id];
+                  const results = pricing.results[identity.id] ?? [];
+                  if (!market || results.length === 0) return null;
+                  return (
+                    <details className="recommendation-calculation-market" key={identity.id}>
+                      <summary><span aria-hidden="true">{flags[identity.id]}</span> {identity.name}</summary>
+                      <div className="recommendation-calculation-market-content">
+                        {STRATEGY_DEFINITIONS.map((strategy, index) => {
+                          const result = results[index];
+                          if (!result) return null;
+                          const strategyConfig = { ...DEMO_STRATEGIES[index], factor: Number(strategyFactors[strategy.id]) };
+                          return (
+                            <section className="recommendation-calculation-strategy" key={strategy.id}>
+                              <h3>{strategy.label} · {formatMoney(result.finalPrice.amount, identity.currency)}</h3>
+                              <ol className="explanation-steps">
+                                {explainRecommendation({ amount: Number(basePrice), currency: baseCurrency }, market, strategyConfig, result).map((line, lineIndex) => <li key={lineIndex}>{line}</li>)}
+                              </ol>
+                            </section>
+                          );
+                        })}
+                      </div>
+                    </details>
+                  );
+                })}
+              </div>
+              <h2 className="recommendation-data-subheading">Data sources and assumptions</h2>
+              <p className="recommendation-data-method">Market assumptions are editable. Demo values are illustrative; sourced data is identified with its source and date. Recommendations are decision support, not predictions of demand or an optimal price.</p>
+              <p className="recommendation-data-method">When comparable data is available, purchasing-power factors use the World Bank private-consumption PPP indicator (PA.NUS.PRVT.PP) with annual-average USD exchange rates from Frankfurter, normalized to a US baseline. If unavailable, the app uses visibly labeled illustrative factors.</p>
+              <div className="recommendation-data-grid">
+                {INITIAL_MARKET_IDENTITIES.map((identity) => {
+                  const market = pricing.markets[identity.id];
+                  return (
+                    <section className="recommendation-data-market" key={identity.id}>
+                      <h3><span aria-hidden="true">{flags[identity.id]}</span> {identity.name}</h3>
+                      <dl>
+                        <div><dt>Exchange rate</dt><dd>{market ? explainProvenance(market.exchangeRateProvenance) : "Unavailable"}</dd></div>
+                        <div><dt>Purchasing power</dt><dd>{market ? explainProvenance(market.purchasingPower.provenance) : "Unavailable"}</dd></div>
+                        <div><dt>Local price points</dt><dd>{market ? explainProvenance(market.pricePointsProvenance) : "Unavailable"}</dd></div>
+                      </dl>
+                    </section>
+                  );
+                })}
+              </div>
+              <p className="recommendation-data-strategies"><strong>Strategy factors</strong> {STRATEGY_DEFINITIONS.map(({ id, label }) => `${label} ${formatNumber(Number(strategyFactors[id]), 2)}×`).join(" · ")} · Editable product assumptions, not empirically calibrated.</p>
+              <p className="recommendation-data-limitations"><strong>Revenue scenario limits</strong> No market reach, demand response to price, taxes, refunds, platform rules, ranking effects, or cross-market behavior are modeled. Expected purchases may be fractional.</p>
+            </div>
           </details>
 
           <footer className="dashboard-footer"><span>Made for independent app developers.</span></footer>
