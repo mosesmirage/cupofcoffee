@@ -2,6 +2,8 @@
 
 **Localized app pricing intelligence for independent developers.**
 
+**Live demo:** [cupofcoffee.onrender.com](https://cupofcoffee.onrender.com/)
+
 CupOfCoffee helps developers compare an app's current price with localized suggestions for the United States, Türkiye, the United Kingdom, and Germany. It combines currency conversion, a purchasing-power adjustment, configurable pricing strategies, and familiar local coffee context. Recommendations are transparent decision support—not predictions of demand or a guaranteed optimal price.
 
 ## What it does
