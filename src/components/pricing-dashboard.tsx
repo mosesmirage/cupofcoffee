@@ -357,6 +357,8 @@ export default function PricingDashboard() {
     const referenceBenchmarks = [...VERIFIED_COFFEE_BENCHMARKS, ...CANDIDATE_COFFEE_BENCHMARKS];
     return [identity.id, resolveCoffeeBenchmark(identity.id, fallback, coffeeOverrides[identity.id], referenceBenchmarks, coffeeNow)];
   })) as Record<MarketId, CoffeeBenchmarkResolution>;
+  const coffeeTypes = [...new Set(Object.values(coffeeResolutions).flatMap(({ benchmark }) => benchmark?.coffeeType ? [benchmark.coffeeType] : []))];
+  const coffeeReferenceLabel = coffeeTypes.length === 1 ? coffeeTypes[0] : coffeeTypes.length ? "market-specific coffee benchmarks" : "not configured";
   const pricing = makePricingState(basePrice, baseCurrency, rates, purchasingPowers, purchasingPowerProvenance, coffeeResolutions, pricePoints, strategyFactors, activeRateSnapshot, coffeeNow);
   const selectedStrategyPrices = selectStrategyPrices(pricing.results, revenueStrategy);
   const revenue = (() => {
@@ -467,6 +469,7 @@ export default function PricingDashboard() {
                 <span className="section-eyebrow">PRICING INTELLIGENCE · FOUR MARKETS</span>
                 <h1 id="recommendations-title">Localized pricing recommendations</h1>
                 <p>Compare your current price with three pricing strategies across markets.</p>
+                <p className="coffee-reference-summary"><span aria-hidden="true">☕</span> Coffee reference: {coffeeReferenceLabel}.</p>
               </div>
               <span className="illustrative-badge">DECISION SUPPORT</span>
             </div>

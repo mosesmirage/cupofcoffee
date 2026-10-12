@@ -674,6 +674,7 @@ input[aria-invalid="true"] { border-color:#d7917f !important; box-shadow:0 0 0 2
 .recommendations-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
 .recommendations-heading h1 { margin: 7px 0 5px; color: #2d3d32; font-family: Georgia, "Times New Roman", serif; font-size: clamp(26px, 3vw, 34px); font-weight: 500; letter-spacing: -.7px; line-height: 1.15; }
 .recommendations-heading p { margin: 0; color: #7e897f; font-size: 14px; line-height: 1.5; }
+.recommendations-heading .coffee-reference-summary { margin-top: 4px; color: #657967; font-size: 12px; }
 .recommendation-market-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; gap: 11px; }
 .recommendation-market-card { min-width: 0; border: 1px solid #e3e8e1; border-radius: 11px; background: #fff; padding: 13px; box-shadow: 0 3px 12px rgb(35 55 38 / 2%); }
 .recommendation-market-heading { display: flex; align-items: center; gap: 8px; min-width: 0; }
