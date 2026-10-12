@@ -668,6 +668,7 @@ export default function PricingDashboard() {
               <div className="revenue-results" aria-live="polite">
                 {revenue.error && <div className="revenue-error" role="alert" aria-live="polite"><strong>Revenue scenario unavailable</strong><span>{revenueErrorMessage(revenue.error)}</span></div>}
                 <div className="revenue-results-header"><strong>Scenario output by market</strong><span>Each market is shown in its local currency; values are not compared across currencies.</span></div>
+                <p className="scenario-assumption-note">Expected purchases = audience × conversion rate, held constant across price strategies. Gross and net use the selected strategy’s rounded local price.</p>
                 <div className="revenue-result-grid">
                   {INITIAL_MARKET_IDENTITIES.map((identity) => {
                     const result = revenue.results.find(({ marketId }) => marketId === identity.id);

@@ -756,6 +756,7 @@ input[aria-invalid="true"] { border-color:#d7917f !important; box-shadow:0 0 0 2
 .revenue-scenarios-accordion > summary { min-height: 54px; }
 .revenue-scenarios-accordion[open] > summary { border-bottom: 1px solid #edf0eb; }
 .revenue-scenarios-accordion .revenue-section { margin: 0; padding: 16px; }
+.scenario-assumption-note { margin: 7px 0 12px; color: #68766a; font-size: 13px; line-height: 1.5; }
 
 @media (max-width: 1100px) {
   .recommendation-market-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
